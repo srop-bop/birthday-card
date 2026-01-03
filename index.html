@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday 🤍</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+/* ===== BACKGROUND BREATHING ===== */
+@keyframes breathe{
+  0%{background-position:50% 0%}
+  50%{background-position:50% 100%}
+  100%{background-position:50% 0%}
+}
+body{
+  font-family:'Georgia',serif;
+  background:
+    radial-gradient(circle at top, rgba(255,220,230,.55), transparent 60%),
+    linear-gradient(180deg,#f9eef2,#fff);
+  background-size:100% 200%;
+  animation:breathe 18s ease-in-out infinite;
+  color:#333;
+  overflow:hidden;
+}
+
+/* ===== FILM GRAIN ===== */
+body::after{
+  content:"";
+  position:fixed; inset:0;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:20;
+}
+
+/* ===== VIGNETTE ===== */
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  background:radial-gradient(circle, transparent 55%, rgba(0,0,0,.18));
+  pointer-events:none;
+  z-index:19;
+}
+
+/* ===== LOCKSCREEN ===== */
+.lockscreen{
+  position:fixed; inset:0;
+  background:linear-gradient(180deg,#f7f3ee,#fff);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+  transition:opacity 1.2s ease;
+  z-index:10;
+}
+body.opened .lockscreen{
+  opacity:0; pointer-events:none;
+}
+
+/* ===== SCROLL ===== */
+main{
+  height:100vh;
+  overflow-y:scroll;
+  scroll-snap-type:y mandatory;
+}
+section{
+  height:100vh;
+  scroll-snap-align:start;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:40px 22px;
+  opacity:0;
+  transform:translateY(40px);
+  transition:1.2s ease;
+}
+section.show{
+  opacity:1;
+  transform:translateY(0);
+}
+.box{max-width:600px;text-align:center}
+
+/* ===== TYPING ===== */
+.typing{font-size:1.05em;line-height:1.7}
+.cursor::after{
+  content:"|";
+  animation:blink 1s infinite;
+}
+@keyframes blink{
+  0%,50%,100%{opacity:1}
+  25%,75%{opacity:0}
+}
+
+/* ===== SLIDESHOW ===== */
+.slideshow{overflow:hidden}
+.slider{
+  display:flex;
+  transition:transform .9s ease;
+  touch-action:pan-y;
+}
+.slider > *{
+  width:100%;
+  flex-shrink:0;
+  border-radius:20px;
+  box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+
+/* ===== TEXT PER FOTO ===== */
+.memory{
+  margin-top:14px;
+  font-size:.95em;
+  color:#555;
+  opacity:0;
+  transition:opacity .6s ease;
+}
+.memory.show{opacity:1}
+
+/* ===== RENJUN ===== */
+.renjun{
+  background:rgba(255,255,255,.75);
+  padding:30px;
+  border-radius:22px;
+  backdrop-filter:blur(6px);
+  transform:scale(.95);
+  transition:1.2s ease;
+}
+section.show .renjun{transform:scale(1)}
+.renjun img{
+  width:140px;height:140px;
+  border-radius:50%;
+  margin-bottom:15px;
+  object-fit:cover;
+  box-shadow:0 8px 20px rgba(0,0,0,.2);
+}
+
+/* ===== DANIN (foto4) ===== */
+.danin img{
+  width:220px;
+  max-width:70%;
+  border-radius:18px;
+  margin-bottom:20px;
+  box-shadow:0 10px 25px rgba(0,0,0,.18);
+}
+
+/* ===== ENDING ===== */
+body.ending{animation:none}
+#final{
+  margin-top:20px;
+  opacity:0;
+  transition:opacity 1.2s ease;
+}
+</style>
+</head>
+
+<body>
+
+<div class="lockscreen" onclick="openCard()">
+  <h1>🎁 Untuk Kamu</h1>
+  <p>Tap untuk membuka</p>
+</div>
+
+<audio id="music" preload="auto">
+  <source src="serta-mulia.mp3" type="audio/mpeg">
+</audio>
+<audio id="typeSound" preload="auto">
+  <source src="type.mp3" type="audio/mpeg">
+</audio>
+
+<main>
+
+<section>
+  <div class="box">
+    <h2 id="secret">Selamat Ulang Tahun,<br><span id="name"></span>🤍</h2>
+    <p id="t1" class="typing cursor"></p>
+  </div>
+</section>
+
+<section>
+  <div class="box">
+    <p id="t2" class="typing cursor"></p>
+  </div>
+</section>
+
+<section>
+  <div class="box slideshow">
+    <div class="slider" id="slider">
+      <img src="foto1.jpg">
+      <img src="foto2.jpg">
+      <img src="foto3.jpg">
+    </div>
+    <p class="memory" id="memory"></p>
+  </div>
+</section>
+
+<section id="renjun">
+  <div class="box renjun">
+    <img src="renjun.jpg">
+    <p>“Selamat ulang tahun. Terima kasih sudah selalu berjalan sedikit di depanku, seperti kakak yang diam-diam menjaga. Semoga hari ini kamu diberi banyak alasan untuk tersenyum. Aku mungkin hanya adik yang jauh, tapi aku sungguh berharap kamu selalu sehat, tenang, dan bahagia.”</p>
+    <strong>— Injunn</strong>
+  </div>
+</section>
+
+<section id="danin">
+  <div class="box danin">
+    <img src="foto4.jpg">
+    <p id="final">Terima kasih sudah lahir, dan tetap ada.</p>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ===== DOM ===== */
+const name = document.getElementById("name");
+const music = document.getElementById("music");
+const typeSound = document.getElementById("typeSound");
+const secret = document.getElementById("secret");
+const final = document.getElementById("final");
+
+/* ===== DATA ===== */
+name.innerText="Daninta Ratri Imansari";
+const memories=[
+  "Hari itu sederhana, tapi terasa sangat bahagia.",
+  "Ingat bagaimana hari itu berjalan? Rasanya begitu cepat berlalu.",
+  "Seandainya waktu mau melambat agar kita bisa lebih lama merasakan bersama."
+];
+
+/* ===== TYPING ===== */
+function typeText(el,text){
+  let i=0;
+  const t=document.getElementById(el);
+  const s=typeSound; s.volume=.12;
+  const timer=setInterval(()=>{
+    t.innerHTML+=text.charAt(i);
+    if(i%2===0){s.currentTime=0;s.play()}
+    if(++i>=text.length)clearInterval(timer);
+  },40);
+}
+
+/* ===== OBSERVER ===== */
+const observer=new IntersectionObserver(e=>{
+  e.forEach(x=>{
+    if(x.isIntersecting){
+      x.target.classList.add("show");
+      if(x.target.id==="danin"){
+        document.body.classList.add("ending");
+        setTimeout(()=>final.style.opacity=1,800);
+      }
+    }
+  });
+},{threshold:.6});
+document.querySelectorAll("section").forEach(s=>observer.observe(s));
+
+/* ===== SLIDER ===== */
+const reminder=document.getElementById("memory");
+const slider=document.getElementById("slider");
+let index=0,startX=0,curX=0,drag=false;
+const totalSlides=slider.children.length;
+
+function updateSlide(){
+  slider.style.transform=`translateX(-${index*100}%)`;
+  reminder.classList.remove("show");
+  setTimeout(()=>{
+    reminder.innerText=memories[index];
+    reminder.classList.add("show");
+  },200);
+}
+updateSlide();
+
+slider.addEventListener("touchstart",e=>{
+  startX=e.touches[0].clientX;
+  drag=true;
+});
+slider.addEventListener("touchmove",e=>{
+  if(drag)curX=e.touches[0].clientX;
+});
+slider.addEventListener("touchend",()=>{
+  if(!drag)return;
+  const d=curX-startX;
+  if(d>50 && index>0)index--;
+  if(d<-50 && index<totalSlides-1)index++;
+  updateSlide();
+  drag=false;
+});
+
+/* ===== SECRET ===== */
+secret.onclick=()=>{
+  alert("Kalau kamu menemukan ini, berarti kamu benar-benar memperhatikan 🤍");
+};
+
+/* ===== OPEN ===== */
+function openCard(){
+  document.body.classList.add("opened");
+  music.volume=0; music.play();
+  let v=0; const f=setInterval(()=>{
+    v+=.05; music.volume=v;
+    if(v>=1)clearInterval(f);
+  },200);
+  setTimeout(()=>{
+    typeText("t1","Di dunia yang ribut ini, kamu adalah tenangku. Selamat ulang tahun, manusia favoritku.");
+    setTimeout(()=>typeText("t2","Semoga setiap mimpimu perlahan menemukan jalannya. Aku ingin berjalan bersamamu, jadi bagian dari setiap cerita hidupmu."),2400);
+  },1000);
+}
+</script>
+
+</body>
+</html>
