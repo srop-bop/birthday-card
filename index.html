@@ -98,7 +98,7 @@ section.show{
 .slider{
   display:flex;
   transition:transform .9s ease;
-  touch-action:pan-y;
+  touch-action:pan-x;
 }
 .slider > *{
   width:100%;
@@ -106,7 +106,9 @@ section.show{
   border-radius:20px;
   box-shadow:0 10px 25px rgba(0,0,0,.15);
 }
-
+.slideshow{
+  touch-action: pan-x;
+}
 /* ===== TEXT PER FOTO ===== */
 .memory{
   margin-top:14px;
@@ -273,9 +275,11 @@ slider.addEventListener("touchstart",e=>{
   startX=e.touches[0].clientX;
   drag=true;
 });
-slider.addEventListener("touchmove",e=>{
-  if(drag)curX=e.touches[0].clientX;
-});
+slider.addEventListener("touchmove", e=>{
+  if(!drag) return;
+  e.preventDefault();            // ⬅️ PENTING
+  curX = e.touches[0].clientX;
+},{ passive:false });
 slider.addEventListener("touchend",()=>{
   if(!drag)return;
   const d=curX-startX;
